@@ -1,0 +1,76 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: mall-gateway
+#???????
+cloud:
+  gateway:
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+      routes:
+        - id: mall-user-service
+          uri: lb://mall-user
+          predicates:
+          - Path=/api/user/**
+          filters:
+          - StripPrefix=1
+
+          - id: mall-product-service
+            uri: lb://mall-product
+            predicates:
+              - Path=/api/user/**
+          - id: mall-order-service
+            uri: lb://mall-user
+            predicates:
+              - Path=/api/user/**
+            filters:
+              - StripPrefix=1
+
+              - id: mall-order-service
+                uri: lb://mall-order
+                predicates:
+                  - Path=/api/user/**
+                filters:
+                  - StripPrefix=1
+
+                  - id: mall-payment-service
+                    uri: lb://mall-payment
+                    predicates:
+                      - Path=/api/user/**
+                    filters:
+                      - StripPrefix=1
+
+                      - id: mall-order-service
+                        uri: lb://mall-order
+                        predicates:
+                          - Path=/api/user/**
+                        filters:
+                          - StripPrefix=1
+
+                          - id: mall-auth-service
+                            uri: lb://mall-auth
+                            predicates:
+                              - Path=/api/user/**
+                            filters:
+                              - StripPrefix=1
+
+                              - id: mall-recommendation-service
+                                uri: lb://mall-recommendation
+                                predicates:
+                                  - Path=/api/user/**
+                                filters:
+                                  - StripPrefix=1
+
+                        #Actuator??
+                        manangerment:
+                          endpoints:
+                            web:
+                              exposure:
+                                include: "*"
+                            endpoint:
+                              health:
+                                show details: always
